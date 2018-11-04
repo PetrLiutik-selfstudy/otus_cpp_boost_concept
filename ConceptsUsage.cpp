@@ -42,6 +42,22 @@ struct StructWithoutDestructor {
 };
 
 
+// Структуры для теста концепта наличия оператора меньше.
+struct StructWithLessOperator {
+  StructWithLessOperator() = default;
+
+  bool operator<(const StructWithLessOperator&) const {
+      return true;
+  }
+};
+
+struct StructWithoutLessOperator {
+  StructWithoutLessOperator() = default;
+
+  bool operator<(const StructWithoutLessOperator&) const = delete;
+};
+
+
 // Шаблоны итераторов для теста концепта итератора произвольного доступа.
 template<typename T>
 struct IteratorWithoutCopyConstructor : std::vector<T>::iterator {
@@ -75,7 +91,6 @@ struct IteratorWithoutEqualOperator : std::vector<T>::iterator {
 
 
 int main(int argc, char * argv[]) {
-
   // Проверка концепта DefaultConstructible.
   // Не нарушен.
   BOOST_CONCEPT_ASSERT((my_concepts::DefaultConstructible<int>));
@@ -122,6 +137,7 @@ int main(int argc, char * argv[]) {
 //  BOOST_CONCEPT_ASSERT((my_concepts::Convertible<int, int*>));
 //  BOOST_CONCEPT_ASSERT((my_concepts::Convertible<std::array<int, 5>, std::array<int, 4>>));
 
+
   // Проверка концепта Container.
   // Не нарушен.
   BOOST_CONCEPT_ASSERT((my_concepts::Container<std::vector<int>>));
@@ -131,6 +147,13 @@ int main(int argc, char * argv[]) {
   // Нарушен.
 //  BOOST_CONCEPT_ASSERT((my_concepts::Container<int>));
 //  BOOST_CONCEPT_ASSERT((my_concepts::Container<std::bitset<5>>));
+
+
+  // Проверка концепта Convertible.
+  // Не нарушен.
+  BOOST_CONCEPT_ASSERT((my_concepts::LessThenComparable<StructWithLessOperator>));
+  // Нарушен.
+//  BOOST_CONCEPT_ASSERT((my_concepts::LessThenComparable<StructWithoutLessOperator>));
 
 
   // Проверка концепта RandomAccessIterator.
@@ -147,4 +170,6 @@ int main(int argc, char * argv[]) {
 //  BOOST_CONCEPT_ASSERT((my_concepts::RandomAccessIterator<IteratorWithoutDereferenceOperator<int>>));
 //  BOOST_CONCEPT_ASSERT((my_concepts::RandomAccessIterator<IteratorWithoutElementAcessOperator<int>>));
 //  BOOST_CONCEPT_ASSERT((my_concepts::RandomAccessIterator<IteratorWithoutEqualOperator<int>>));
+
+  return 0;
 }
