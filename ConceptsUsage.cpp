@@ -28,7 +28,7 @@ struct StructWithoutCopyConstructor {
 };
 
 struct StructWithoutAddressOfOperator {
-  operator&() = delete;
+  StructWithoutAddressOfOperator* operator&() = delete;
 };
 
 
